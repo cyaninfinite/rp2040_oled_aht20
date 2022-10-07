@@ -31,11 +31,11 @@ float temp_cur{ 0.0 };
 float humidity_cur{ 0.0 };
 bool led_toggle{ 0 };
 
-void startWire(TwoWire &tw, const int *i2c_pins) {
+void startWire(TwoWire &tw, const uint8_t *i2c_pins) {
   tw.setSDA(i2c_pins[0]);
   tw.setSCL(i2c_pins[1]);
   tw.begin();
-  if (DEBUG) Serial.println("\nWire init");
+  if (DEBUG) Serial.println("Wire init");
 }
 
 //(int)temp_cur - start_cold > 0 ? temp_cur - start_cold : 0, (int)start_hot - temp_cur > 0 ? start_hot - temp_cur : 0
@@ -53,14 +53,21 @@ void setup() {
     Serial.println("\nSerial init");
   }
   rgb_led.begin();  // RGB init
+  rgb_led.show();   // Turn off all LEDs
 
   // OLED Display (I2C1)
+  if (DEBUG) Serial.print("Disp ");
   startWire(Wire, I2C1_pins);
   u8g2.begin();
   u8g2.setFont(u8g2_font_ncenB10_tr);
 
+  u8g2.clearBuffer();
+  u8g2.drawStr(0, 18, "Booting...");
+  u8g2.sendBuffer();
+
   //I2C for AHT20 (I2C0)
-  startWire(Wire1, I2C1_pins);
+  if (DEBUG) Serial.print("AHT20 ");
+  startWire(Wire1, I2C0_pins);
   uint8_t status;
   boolean sen_err{ false };
   while ((status = aht20.begin()) != 0) {
