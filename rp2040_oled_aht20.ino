@@ -31,6 +31,8 @@ float temp_cur{ 0.0 };
 float humidity_cur{ 0.0 };
 bool led_toggle{ 0 };
 
+bool DEBUG{ 0 };
+
 void startWire(TwoWire &tw, const uint8_t *i2c_pins) {
   tw.setSDA(i2c_pins[0]);
   tw.setSCL(i2c_pins[1]);
@@ -46,14 +48,19 @@ int calIntensity(const bool &isHot, const float &currentT, const int &thresholdT
 }
 
 void setup() {
+  //Debug pin
+  pinMode(DEBUG_PIN, INPUT_PULLUP);   // Pull high by default
+  DEBUG = !digitalRead(DEBUG_PIN);    // If low, DEBUG mode is enabled
+
   if (DEBUG) {
     Serial.begin(9600);
     while (!Serial)
       ;  // Wait for Serial Monitor
     Serial.println("\nSerial init");
   }
+
   rgb_led.begin();  // RGB init
-  rgb_led.show();   // Turn off all LEDs
+  rgb_led.show();   // Ensure LED is off
 
   // OLED Display (I2C1)
   if (DEBUG) Serial.print("Disp ");

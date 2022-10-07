@@ -1,4 +1,4 @@
-const int DEBUG{ 1 };
+const uint8_t DEBUG_PIN{ 20 };
 
 const uint8_t LED_PIN{ 12 };
 const int LED_COUNT{ 1 };
